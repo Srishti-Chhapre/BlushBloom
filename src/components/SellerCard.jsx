@@ -4,7 +4,7 @@ const SellerCard = () => {
   const [sellers, setSellers] = useState([]);
 
   const getSellers = () => {
-    fetch("./api/sellers.json")
+    fetch(`${import.meta.env.BASE_URL}api/sellers.json`)
       .then((response) => response.json())
       .then((data) => setSellers(data.sellers));
   };

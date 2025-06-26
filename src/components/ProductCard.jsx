@@ -4,7 +4,7 @@ const ProductCard = () => {
   const [data, setData] = useState([]);
 
   const getData = () => {
-    fetch("./api/flowers.json")
+    fetch(`${import.meta.env.BASE_URL}api/flowers.json`)
       .then((response) => response.json())
       .then((data) => setData(data.products));
   };

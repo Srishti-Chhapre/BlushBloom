@@ -4,7 +4,7 @@ const CategoryCard = () => {
   const [categories, setCategories] = useState([]);
 
   const getCategories = () => {
-    fetch("./api/flowers.json")
+    fetch(`${import.meta.env.BASE_URL}api/flowers.json`)
       .then((response) => response.json())
       .then((data) => setCategories(data.products));
   };
