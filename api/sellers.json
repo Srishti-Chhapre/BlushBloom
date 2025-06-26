@@ -1,0 +1,25 @@
+{
+  "sellers": [
+    {
+      "id": 1,
+      "name": "Fresh Blooms Studio",
+      "description": "Specializes in wedding and pooja flowers.",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTThgySjEPvlEo6ldOm-rL8egceyrCSIaUDEsx5yZYeQaYSbYhxMCVKk4jMLr6rO4Opt_s&usqp=CAU",
+      "location": "Mumbai"
+    },
+    {
+      "id": 2,
+      "name": "Blossom Paradise",
+      "description": "Famous for vibrant birthday bouquets.",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThOlT9axI1CHn-dTAk7BXDUmof75YAkzfGhp_6i27QMOHDVTMrgPckYpdJx_oSzHXWz-o&usqp=CAU",
+      "location": "Delhi"
+    },
+    {
+      "id": 3,
+      "name": "Orchid House",
+      "description": "Offers premium office and party flowers.",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSijawqeh44lNATSQhMXoKeDOWTHRSyxL8OipZLFqPHfIdPUpNHVjfnH7YDqHiibS4-kYU&usqp=CAU",
+      "location": "Bangalore"
+    }
+  ]
+}
