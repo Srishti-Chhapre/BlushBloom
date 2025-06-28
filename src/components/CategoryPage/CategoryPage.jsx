@@ -6,13 +6,13 @@ const CategoryPage = () => {
 
   // Fetching from mock API
   useEffect(() => {
-    fetch('/api/flowers.json')
+    fetch(`${import.meta.env.BASE_URL}api/flowers.json`)
       .then((res) => res.json())
       .then((data) => setProducts(data.products));
   }, []);
 
   return (
-    <div className="container mx-auto px-4  flex gap-8">
+    <div className="container mx-auto px-4 pl-0 ml-0 flex gap-8">
       {/* Sidebar Filters */}
       <SidebarFilter />
 
@@ -38,10 +38,15 @@ const CategoryPage = () => {
               />
               <h3 className="text-lg font-semibold mb-2">{product.title}</h3>
               <p className="text-pink-600 font-bold mb-2">₹{product.price}</p>
-              <p className="text-sm text-gray-600 mb-4">Seller: {product.seller}</p>
+              {/* <p className="text-sm text-gray-600 mb-4">Seller: {product.seller}</p> */}
+              <div className='flex gap-1.5'>
               <button className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600">
                 Buy Now
               </button>
+               <button className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600">
+                Add To Cart
+              </button>
+            </div>
             </div>
           ))}
         </div>

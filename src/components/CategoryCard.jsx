@@ -27,7 +27,7 @@ const CategoryCard = () => {
   return (
     <>
       <div className="bg-pink-100 py-6">
-        <h1 className="text-center text-2xl font-bold mb-6 text-gray-800">Shop by Category</h1>
+        <h1 className="text-center text-2xl font-bold mb-6 text-pink-600">Shop by Category</h1>
         <div className="flex flex-wrap gap-4 justify-center">
           {uniqueCategories.map((category) => (
             <div key={category.id} className="bg-white rounded-lg shadow-lg overflow-hidden w-72">

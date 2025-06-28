@@ -5,7 +5,7 @@ import SellerFilter from '../Filters/SellerFilter';
 
 const SidebarFilter = () => {
   return (
-    <aside className="w-1/4 bg-pink-50 p-4 rounded-lg shadow sticky top-0 h-fit">
+    <aside className="w-1/6 bg-pink-50 p-4 rounded-lg shadow sticky top-0 h-screen">
       <h2 className="text-lg font-bold mb-4">Filters</h2>
       <CategoryFilter />
       <PriceFilter />

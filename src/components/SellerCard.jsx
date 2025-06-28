@@ -16,7 +16,7 @@ const SellerCard = () => {
   return (
     <>
       <div className="bg-pink-100 py-6 bg-gradient-to-r from-pink-200 to-pink-400">
-        <h1 className="text-center text-2xl font-bold mb-6 text-gray-800 uppercase">
+        <h1 className="text-center text-2xl font-bold mb-6 text-pink-600 uppercase">
           Meet Our Trusted Sellers
         </h1>
         <div className="flex flex-wrap gap-4 justify-center">
