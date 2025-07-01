@@ -9,7 +9,7 @@ const ProductDetails = ({ product }) => {
   // Fetch seller information
   useEffect(() => {
     if (product?.sellerId) {
-      fetch("/api/sellers.json")
+      fetch(`${import.meta.env.BASE_URL}api/sellers.json`)
         .then((res) => res.json())
         .then((data) => {
           const foundSeller = data.sellers.find((s) => s.id === product.sellerId);

@@ -7,7 +7,7 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    fetch("/api/flowers.json")
+    fetch(`${import.meta.env.BASE_URL}api/flowers.json`)
       .then((res) => res.json())
       .then((data) => {
         const foundProduct = data.products.find((item) => item.id === parseInt(id));

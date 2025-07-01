@@ -12,7 +12,7 @@ const SearchResultsPage = () => {
 
   // Fetch all products
   useEffect(() => {
-    fetch('/api/flowers.json')
+    fetch(`${import.meta.env.BASE_URL}api/flowers.json`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data.products);
