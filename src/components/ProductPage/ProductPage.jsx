@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // if you're using URL params
+import { useParams } from "react-router-dom";
 import ProductDetails from "../ProductDetails/ProductDetails";
 
 const ProductPage = () => {
-  const { id } = useParams(); // assuming route like /product/:id
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
