@@ -31,7 +31,7 @@ const ProductDetails = ({ product }) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-12">
+    <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-12 bg-pink-50">
       {/* Product Image */}
       <div>
         <img
