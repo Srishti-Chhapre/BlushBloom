@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useCart } from "../../ContextAPI/CartContext";
 
 const SearchResultsPage = () => {
+  const { dispatch } = useCart();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const query = searchParams.get("q") || "";
@@ -43,13 +45,20 @@ const SearchResultsPage = () => {
               <h3 className="text-lg font-semibold mb-2">{product.title}</h3>
               <p className="text-pink-600 font-bold mb-2">₹{product.price}</p>
               <p className="text-sm text-gray-600 mb-4">
-                <span className="font-bold">Seller: </span> {getSellerName(product.sellerId)}
+                <span className="font-bold">Seller: </span>{" "}
+                {getSellerName(product.sellerId)}
               </p>
               <div className="flex gap-1">
                 <button className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 cursor-pointer">
                   Buy Now
                 </button>
-                <button className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 cursor-pointer">
+                <button
+                  className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-600 cursor-pointer"
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent navigation if inside a Link
+                    dispatch({ type: "ADD_TO_CART", payload: product });
+                  }}
+                >
                   Add to Cart
                 </button>
               </div>
