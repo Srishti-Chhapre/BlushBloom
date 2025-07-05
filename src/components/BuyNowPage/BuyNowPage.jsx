@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const BuyNowPage = () => {
@@ -6,6 +6,7 @@ const BuyNowPage = () => {
   const [product, setProduct] = useState(null);
   const [address, setAddress] = useState('');
   const [phone, setPhone] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(`${import.meta.env.BASE_URL}api/flowers.json`)
@@ -22,7 +23,7 @@ const BuyNowPage = () => {
       return;
     }
     console.log('Order Placed:', { product, address, phone });
-    alert('Order placed successfully!');
+    navigate("/payment");
     // You can navigate to Thank You page here
   };
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Star, ShoppingCart, Truck } from "lucide-react";
 import { useCart } from "../../ContextAPI/CartContext";
+import { useUser } from "../../ContextAPI/UserContext";
 import { useNavigate } from "react-router-dom";
 
 const ProductDetails = ({ product }) => {
@@ -9,6 +10,7 @@ const ProductDetails = ({ product }) => {
   const [sellerInfo, setSellerInfo] = useState(null);
   const { dispatch } = useCart();
   const navigate = useNavigate();
+  const { user } = useUser();
 
   // Fetch seller information
   useEffect(() => {
@@ -25,12 +27,22 @@ const ProductDetails = ({ product }) => {
   }, [product]);
 
   const handleAddToCart = () => {
+    if (!user) {
+      navigate("/login"); // Redirect if not logged in
+      return;
+    }
     console.log("Added to cart", { product, quantity });
     dispatch({ type: "ADD_TO_CART", payload: { ...product } });
     // Navigate to cart page after adding
     navigate("/cart");
   };
-
+  const handleBuyNow = () => {
+        if (!user) {
+      navigate("/login"); // Redirect if not logged in
+      return;
+    }
+    navigate(`/buy-now/${product.id}`);
+  };
 
   if (!product) {
     return <div className="text-center mt-10 text-lg">Loading...</div>;
@@ -100,7 +112,7 @@ const ProductDetails = ({ product }) => {
             <ShoppingCart className="mr-2" /> Add to Cart
           </button>
           <button
-            onClick={() => navigate(`/buy-now/${product.id}`)}
+            onClick={handleBuyNow}
             className="px-8 py-3 border border-pink-500 text-pink-500 rounded-full hover:bg-pink-50 transition-transform hover:scale-105"
           >
             Buy Now

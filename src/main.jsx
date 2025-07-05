@@ -20,28 +20,37 @@ import Register from "./components/Auth/Register";
 import Profile from "./components/ProfilePage/ProfilePage";
 import EditProfile from "./components/EditProfile/EditProfile";
 import ChangePassword from "./components/Auth/ChangePassword";
+import PaymentPage from "./components/PaymentPage/PaymentPage";
+import PaymentSuccess from "./components/PaymentPage/PaymentSuccess";
+import PaymentFailure from "./components/PaymentPage/PaymentFailure";
+import { UserProvider } from "./ContextAPI/UserContext";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <CartProvider>
-      <HashRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/categories" element={<CategoryPage />} />
-          <Route path="/search" element={<SearchResultsPage />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/cart" element={<CartPage />} /> {/* Example route */}
-          <Route path="/buy-now/:id" element={<BuyNowPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/edit-profile" element={<EditProfile />} />
-          <Route path="/change-password" element={<ChangePassword />} />
-        </Routes>
-      </HashRouter>
-    </CartProvider>
+    <UserProvider>
+      <CartProvider>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/categories" element={<CategoryPage />} />
+            <Route path="/search" element={<SearchResultsPage />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/product/:id" element={<ProductPage />} />
+            <Route path="/cart" element={<CartPage />} /> {/* Example route */}
+            <Route path="/buy-now/:id" element={<BuyNowPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/edit-profile" element={<EditProfile />} />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-failure" element={<PaymentFailure />} />
+          </Routes>
+        </HashRouter>
+      </CartProvider>
+    </UserProvider>
     <ToastContainer />
   </React.StrictMode>
 );
