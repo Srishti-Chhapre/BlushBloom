@@ -1,42 +1,21 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { User } from 'lucide-react';
 
 const UserMenu = () => {
   const isLoggedIn = localStorage.getItem('isLoggedIn');
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    alert('Logged out!');
-    navigate('/login');
-  };
 
   return (
     <div className="text-gray-700">
       {isLoggedIn ? (
-        <div className="flex items-center gap-4">
-          <Link to="/profile" className="hover:text-pink-600">
-            <User size={24} />
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300"
-          >
-            Logout
-          </button>
-        </div>
+        <Link to="/profile" className="flex items-center hover:text-pink-600">
+          <User size={24} />
+        </Link>
       ) : (
-        <div className="flex gap-2">
-          <Link
-            to="/login"
-            className="font-medium bg-pink-500 p-2 text-white rounded hover:bg-pink-600"
-          >
+        <div className="flex gap-1.5">
+          <Link to="/login" className="font-medium bg-pink-500 p-1 py-1.5 text-white rounded-sm">
             Login
           </Link>
-          <Link
-            to="/register"
-            className="font-medium bg-pink-500 p-2 text-white rounded hover:bg-pink-600"
-          >
+          <Link to="/register" className="font-medium bg-pink-500 p-1 py-1.5 text-white rounded-sm">
             Register
           </Link>
         </div>
