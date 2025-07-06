@@ -32,7 +32,6 @@ const PaymentPage = () => {
     } else {
       navigate("/payment-failure");
     }
-    // Here  can trigger Razorpay or navigate to payment success page
   };
 
   const totalAmount = cart.reduce(

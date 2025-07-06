@@ -24,7 +24,7 @@ const BuyNowPage = () => {
     }
     console.log('Order Placed:', { product, address, phone });
     navigate("/payment");
-    // You can navigate to Thank You page here
+    // navigate to Thank You page 
   };
 
   if (!product) return <div className="text-center mt-10 text-lg">Loading...</div>;

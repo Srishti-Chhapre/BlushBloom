@@ -13,7 +13,6 @@ const Register = () => {
     address: '',
     password: '',
     confirmPassword: '',
-    // Seller-specific
     businessName: '',
     gstNumber: '',
     document: ''
@@ -33,7 +32,6 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Common validations
     if (!user.name || !user.email || !user.password || !user.confirmPassword) {
       setError('All fields are required!');
       return;
@@ -101,7 +99,7 @@ const Register = () => {
         businessName: user.businessName,
         gstNumber: user.gstNumber,
         document: user.document,
-        status: 'Pending' // Admin approval pending
+        status: 'Pending' 
       };
 
       sellers.push(sellerData);
@@ -115,7 +113,6 @@ const Register = () => {
     <div className="max-w-md mx-auto mt-20 p-6 border border-pink-600 bg-pink-50 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
 
-      {/* Toggle Buttons */}
       <div className="flex justify-center mb-4">
         <button
           className={`px-4 py-2 mr-2 rounded ${userType === 'customer' ? 'bg-pink-500 text-white' : 'bg-gray-300 text-gray-700 border-none'}`}

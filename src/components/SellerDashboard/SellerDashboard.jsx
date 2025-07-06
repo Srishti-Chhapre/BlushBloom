@@ -8,7 +8,7 @@ const SellerDashboard = () => {
   const [totalSales, setTotalSales] = useState(0);
   const [products, setProducts] = useState([]);
 
-  // Dummy fetch for seller products (replace with seller-specific API later)
+  // Dummy fetch for seller products 
   useEffect(() => {
     if (!seller) {
       navigate('/seller-login');
@@ -20,7 +20,6 @@ const SellerDashboard = () => {
       .then((data) => {
         const sellerProducts = data.products.filter(product => product.sellerId === seller.id);
         setProducts(sellerProducts);
-        // Assuming each product has a salesCount field for total sales calculation
         const total = sellerProducts.reduce((acc, product) => acc + (product.salesCount || 0), 0);
         setTotalSales(total);
       });
