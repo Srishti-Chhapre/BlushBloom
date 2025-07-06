@@ -4,9 +4,11 @@ import bcrypt from 'bcryptjs';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useUser } from '../../ContextAPI/UserContext';
+import { useSeller } from '../../ContextAPI/SellerContext'; // Import Seller Context
 
 const Login = () => {
   const { login } = useUser();
+  const { loginSeller } = useSeller(); // Get Seller Login Function
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -20,23 +22,51 @@ const Login = () => {
       return;
     }
 
-    const storedUser = JSON.parse(localStorage.getItem('user'));
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const sellers = JSON.parse(localStorage.getItem('sellers')) || [];
 
-    if (!storedUser || storedUser.email !== email) {
+    const existingCustomer = users.find(user => user.email === email);
+    const existingSeller = sellers.find(seller => seller.email === email);
+
+    if (existingCustomer) {
+      const isPasswordValid = bcrypt.compareSync(password, existingCustomer.password);
+      if (!isPasswordValid) {
+        setError('Invalid password!');
+        return;
+      }
+
+      login(existingCustomer);
+      toast.success('Customer Login Successful!');
+      navigate('/'); // Redirect customer to home page
+    } 
+    else if (existingSeller) {
+      const isPasswordValid = bcrypt.compareSync(password, existingSeller.password);
+      if (!isPasswordValid) {
+        setError('Invalid password!');
+        return;
+      }
+
+      // Save seller in localStorage to track status
+      localStorage.setItem('loggedInSeller', JSON.stringify(existingSeller));
+
+      if (existingSeller.status === 'pending' || existingSeller.status === 'rejected') {
+        toast.info('Seller approval is pending or rejected.');
+        navigate('/seller-approval-status'); // Go to seller status page
+        return;
+      }
+
+      if (existingSeller.isBlocked) {
+        setError('Your seller account is blocked. Contact admin.');
+        return;
+      }
+
+      loginSeller(existingSeller); // Save seller in seller context
+      toast.success('Seller Login Successful!');
+      navigate('/seller-dashboard'); // Go to seller dashboard
+    } 
+    else {
       setError('User not found!');
-      return;
     }
-
-    const isPasswordValid = bcrypt.compareSync(password, storedUser.password);
-
-    if (!isPasswordValid) {
-      setError('Invalid password!');
-      return;
-    }
-
-    login(storedUser);
-    toast.success('Login Successful!');
-    navigate('/');
   };
 
   return (

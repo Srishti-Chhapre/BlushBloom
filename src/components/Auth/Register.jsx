@@ -58,14 +58,16 @@ const Register = () => {
         return;
       }
 
-      const existingUser = JSON.parse(localStorage.getItem('user'));
-      if (existingUser && existingUser.email === user.email) {
+      const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+
+      if (existingUsers.some(u => u.email === user.email)) {
         setError('User already exists!');
         return;
       }
 
       const hashedPassword = bcrypt.hashSync(user.password, 10);
       const userData = {
+        id: Date.now(),
         userType: 'customer',
         name: user.name,
         email: user.email,
@@ -74,7 +76,9 @@ const Register = () => {
         password: hashedPassword
       };
 
-      localStorage.setItem('user', JSON.stringify(userData));
+      existingUsers.push(userData);
+      localStorage.setItem('users', JSON.stringify(existingUsers));
+
       toast.success('Customer Registered Successfully!');
       navigate('/login');
 
@@ -85,6 +89,7 @@ const Register = () => {
       }
 
       const sellers = JSON.parse(localStorage.getItem('sellers')) || [];
+
       if (sellers.find(seller => seller.email === user.email)) {
         setError('Seller already exists!');
         return;
@@ -92,6 +97,7 @@ const Register = () => {
 
       const hashedPassword = bcrypt.hashSync(user.password, 10);
       const sellerData = {
+        id: Date.now(),
         userType: 'seller',
         name: user.name,
         email: user.email,
@@ -99,13 +105,20 @@ const Register = () => {
         businessName: user.businessName,
         gstNumber: user.gstNumber,
         document: user.document,
-        status: 'Pending' 
+        status: 'pending', // seller is pending by default
+        isBlocked: false
       };
 
       sellers.push(sellerData);
       localStorage.setItem('sellers', JSON.stringify(sellers));
+
+      // ✅ Save pending seller email to track approval
+      localStorage.setItem('pendingSellerEmail', user.email);
+
       toast.success('Seller Registered Successfully! Await Admin Approval.');
-      navigate('/login');
+
+      // ✅ Navigate to Seller Approval Status page
+      navigate('/seller-approval-status');
     }
   };
 
@@ -134,7 +147,6 @@ const Register = () => {
         <input type="text" name="name" placeholder="Name" value={user.name} onChange={handleChange} className="w-full p-2 border border-pink-600 bg-pink-50 rounded" />
         <input type="email" name="email" placeholder="Email" value={user.email} onChange={handleChange} className="w-full p-2 border border-pink-600 bg-pink-50 rounded" />
 
-        {/* Customer Fields */}
         {userType === 'customer' && (
           <>
             <input type="text" name="phone" placeholder="Phone Number" value={user.phone} onChange={handleChange} className="w-full p-2 border border-pink-600 bg-pink-50 rounded" />
@@ -142,7 +154,6 @@ const Register = () => {
           </>
         )}
 
-        {/* Seller Fields */}
         {userType === 'seller' && (
           <>
             <input type="text" name="businessName" placeholder="Business Name" value={user.businessName} onChange={handleChange} className="w-full p-2 border border-pink-600 bg-pink-50 rounded" />
