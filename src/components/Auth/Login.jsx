@@ -1,71 +1,51 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import bcrypt from 'bcryptjs';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useUser } from '../../ContextAPI/UserContext';
-import { useSeller } from '../../ContextAPI/SellerContext'; // Import Seller Context
+// src/pages/Login.jsx
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
+import { loginUser } from "../../api/authApi";
+import { useUser } from "../../ContextAPI/UserContext";
 
 const Login = () => {
-  const { login } = useUser();
-  const { loginSeller } = useSeller(); // Get Seller Login Function
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const { user, login } = useUser();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      setError('All fields are required!');
+      setError("All fields are required!");
       return;
     }
 
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const sellers = JSON.parse(localStorage.getItem('sellers')) || [];
+    try {
+      // 1. Login
+      const res = await loginUser({ email, password });
+      const { token } = res.data;
 
-    const existingCustomer = users.find(user => user.email === email);
-    const existingSeller = sellers.find(seller => seller.email === email);
+      localStorage.setItem("token", token); // ✅ Save token
 
-    if (existingCustomer) {
-      const isPasswordValid = bcrypt.compareSync(password, existingCustomer.password);
-      if (!isPasswordValid) {
-        setError('Invalid password!');
-        return;
-      }
+      // 2. Fetch full user profile
+      const profileRes = await axios.get("http://localhost:5000/api/auth/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      login(existingCustomer);
-      toast.success('Customer Login Successful!');
-      navigate('/'); // Redirect customer to home page
-    } 
-    else if (existingSeller) {
-      const isPasswordValid = bcrypt.compareSync(password, existingSeller.password);
-      if (!isPasswordValid) {
-        setError('Invalid password!');
-        return;
-      }
-
-      // Save seller in localStorage to track status
-      localStorage.setItem('loggedInSeller', JSON.stringify(existingSeller));
-
-      if (existingSeller.status === 'pending' || existingSeller.status === 'rejected') {
-        toast.info('Seller approval is pending or rejected.');
-        navigate('/seller-approval-status'); // Go to seller status page
-        return;
-      }
-
-      if (existingSeller.isBlocked) {
-        setError('Your seller account is blocked. Contact admin.');
-        return;
-      }
-
-      loginSeller(existingSeller); // Save seller in seller context
-      toast.success('Seller Login Successful!');
-      navigate('/seller-dashboard'); // Go to seller dashboard
-    } 
-    else {
-      setError('User not found!');
+      // 3. Save to context + localStorage
+      login(profileRes.data);
+      toast.success("Login successful!");
+      navigate("/profile");
+    } catch (error) {
+      setError(error.response?.data?.message || "Login failed!");
     }
   };
 
@@ -88,20 +68,13 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full p-2 border border-pink-600 bg-pink-50 rounded"
         />
-        <button type="submit" className="w-full bg-pink-500 text-white p-2 rounded hover:bg-pink-600">
+        <button
+          type="submit"
+          className="w-full bg-pink-500 text-white p-2 rounded hover:bg-pink-600"
+        >
           Login
         </button>
       </form>
-
-      <div className="mt-6 text-center">
-        <p className="mb-2">Are you a registered user?</p>
-        <button
-          onClick={() => navigate('/register')}
-          className="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-        >
-          No, Register Here
-        </button>
-      </div>
     </div>
   );
 };

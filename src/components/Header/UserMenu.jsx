@@ -1,16 +1,17 @@
-
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../ContextAPI/UserContext';
 import { User } from 'lucide-react';
 
 const UserMenu = () => {
-  const { user, logout } = useUser();
+  const { user, logout, loading } = useUser();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  if (loading) return null; // 🆕 avoid flicker
 
   return (
     <div className="text-gray-700">

@@ -1,0 +1,24 @@
+
+---
+
+```gitignore
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# dotenv environment file
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# uploads (optional - only if using local file storage)
+uploads/
+
+# VSCode settings
+.vscode/
