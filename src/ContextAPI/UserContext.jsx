@@ -1,39 +1,36 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+// src/ContextAPI/UserContext.jsx
+import { createContext, useContext, useState, useEffect } from "react";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Loading flag
+  const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on first mount
-useEffect(() => {
-  try {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+  useEffect(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      }
+    } catch (err) {
+      console.error("Error loading user from localStorage:", err);
+      localStorage.removeItem("user");
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Error loading user from localStorage:', err);
-    localStorage.removeItem('user');
-  } finally {
-    setLoading(false); // ✅ Let the rest of the app render
-  }
-}, []);
+  }, []);
 
-  // 🔐 Login and persist full user data
   const login = (userData) => {
-    console.log("Logging in and saving user:", userData);
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('token', userData.token); // ⬅️ Save token separately
+    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("token", userData.token);
   };
 
-  // 🚪 Logout and clear everything
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   return (

@@ -1,13 +1,13 @@
 // src/api/authApi.js
-import axios from 'axios';
+import axios from "axios";
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api', // Adjust this if needed
+  baseURL: "http://localhost:5000/api",
 });
 
-export const registerUser = (userData) => API.post('/auth/register', userData);
-export const loginUser = (userData) => API.post('/auth/login', userData);
+export const registerUser = (userData) => API.post("/auth/register", userData);
+export const loginUser = (userData) => API.post("/auth/login", userData);
 export const getUserProfile = (token) =>
-  API.get('/auth/profile', {
+  API.get("/auth/profile", {
     headers: { Authorization: `Bearer ${token}` },
   });

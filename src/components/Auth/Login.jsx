@@ -1,10 +1,10 @@
-// src/pages/Login.jsx
+// src/components/Auth/Login.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { loginUser } from "../../api/authApi";
 import { useUser } from "../../ContextAPI/UserContext";
+import axios from "axios";
 
 const Login = () => {
   const { user, login } = useUser();
@@ -15,9 +15,7 @@ const Login = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
+    if (user) navigate("/");
   }, [user, navigate]);
 
   const handleSubmit = async (e) => {
@@ -29,19 +27,16 @@ const Login = () => {
     }
 
     try {
-      // 1. Login
       const res = await loginUser({ email, password });
       const { token } = res.data;
 
-      localStorage.setItem("token", token); // ✅ Save token
-
-      // 2. Fetch full user profile
+      // Fetch profile using token
       const profileRes = await axios.get("http://localhost:5000/api/auth/profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // 3. Save to context + localStorage
-      login(profileRes.data);
+      const fullUser = { ...profileRes.data, token }; // ✅ Combine token and user
+      login(fullUser); // Save to context + localStorage
       toast.success("Login successful!");
       navigate("/profile");
     } catch (error) {

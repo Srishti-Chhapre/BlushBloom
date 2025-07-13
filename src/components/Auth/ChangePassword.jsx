@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useUser } from "../../ContextAPI/UserContext";
 
 const ChangePassword = () => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+  const { logout } = useUser();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -20,7 +22,6 @@ const ChangePassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ✅ Client-side validations
     if (!oldPassword || !newPassword || !confirmPassword) {
       toast.error("All fields are required!");
       return;
@@ -53,7 +54,13 @@ const ChangePassword = () => {
       );
 
       toast.success(response.data.message || "Password changed successfully!");
-      navigate("/profile");
+
+      // ✅ Clear session after password change
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      logout();
+      navigate("/login");
+
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to change password");
     }

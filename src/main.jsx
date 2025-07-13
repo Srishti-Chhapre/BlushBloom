@@ -6,6 +6,7 @@ import "./index.css";
 import { CartProvider } from "./ContextAPI/CartContext";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./components/Auth/ProtectedRoute";
 
 import Home from "./components/Home/Home";
 import CategoryPage from "./components/CategoryPage/CategoryPage";
@@ -49,14 +50,14 @@ createRoot(document.getElementById("root")).render(
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/cart" element={<CartPage />} />{" "}
+              <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />{" "}
               {/* Example route */}
-              <Route path="/buy-now/:id" element={<BuyNowPage />} />
+              <Route path="/buy-now/:id" element={<ProtectedRoute><BuyNowPage /></ProtectedRoute>} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/edit-profile" element={<EditProfile />} />
-              <Route path="/change-password" element={<ChangePassword />} />
+              <Route path="/profile" element={ <ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+              <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-failure" element={<PaymentFailure />} />
