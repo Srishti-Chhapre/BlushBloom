@@ -1,6 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./index.css";
 
 import { CartProvider } from "./ContextAPI/CartContext";
@@ -50,20 +50,65 @@ createRoot(document.getElementById("root")).render(
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />{" "}
+              <Route
+                path="/cart"
+                element={
+                  <ProtectedRoute>
+                    <CartPage />
+                  </ProtectedRoute>
+                }
+              />{" "}
               {/* Example route */}
-              <Route path="/buy-now/:id" element={<ProtectedRoute><BuyNowPage /></ProtectedRoute>} />
+              <Route
+                path="/buy-now/:id"
+                element={
+                  <ProtectedRoute>
+                    <BuyNowPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/profile" element={ <ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
-              <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/edit-profile"
+                element={
+                  <ProtectedRoute>
+                    <EditProfile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/change-password"
+                element={
+                  <ProtectedRoute>
+                    <ChangePassword />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-failure" element={<PaymentFailure />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/admin-register" element={<AdminRegister />} />
-              <Route path="/admin-dashboard" element={<AdminDashboard />} />
+              <Route
+                path="/admin-dashboard"
+                element={
+                  localStorage.getItem("isAdminLoggedIn") &&
+                  localStorage.getItem("adminToken") ? (
+                    <AdminDashboard />
+                  ) : (
+                    <Navigate to="/admin-login" />
+                  )
+                }
+              />
               <Route
                 path="/admin-dashboard/manage-sellers"
                 element={<ManageSellers />}
@@ -86,7 +131,6 @@ createRoot(document.getElementById("root")).render(
                 path="/seller/edit-product/:id"
                 element={<EditProductPage />}
               />
-              
             </Routes>
           </HashRouter>
         </SellerProvider>

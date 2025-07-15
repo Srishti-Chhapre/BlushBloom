@@ -12,13 +12,44 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
       required: true,
     },
-    phone: { type: String },
-    address: { type: String },
+
+    // 🧍 Common for customers
+    phone: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
+
+    // 🔐 Roles
+    userType: {
+      type: String,
+      enum: ["customer", "seller", "admin"],
+      default: "customer",
+    },
+
+    // 🧾 Seller-specific
+    businessName: {
+      type: String,
+    },
+    gstNumber: {
+      type: String,
+    },
+    document: {
+      type: String,
+    },
+    approvalStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+
     isAdmin: {
       type: Boolean,
       default: false,
@@ -29,5 +60,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
-export default User;
+export default mongoose.model("User", userSchema);

@@ -2,10 +2,20 @@ import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import generateTokenResponse from '../utils/generateToken.js';
 
-// @desc    Register new user
+// @desc    Register new user (Customer or Seller)
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, phone, address } = req.body;
+    const {
+      name,
+      email,
+      password,
+      phone,
+      address,
+      userType = 'customer', // Default to customer if not provided
+      businessName,
+      gstNumber,
+      document,
+    } = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
@@ -15,15 +25,30 @@ export const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({
+    const newUserData = {
       name,
       email,
       password: hashedPassword,
-      phone,
-      address,
-    });
+      userType,
+    };
 
+    // 👤 Add customer fields
+    if (userType === 'customer') {
+      newUserData.phone = phone;
+      newUserData.address = address;
+    }
+
+    // 🧾 Add seller fields
+    if (userType === 'seller') {
+      newUserData.businessName = businessName;
+      newUserData.gstNumber = gstNumber;
+      newUserData.document = document;
+      newUserData.approvalStatus = 'pending'; // Optional for admin control
+    }
+
+    const newUser = new User(newUserData);
     const savedUser = await newUser.save();
+
     generateTokenResponse(savedUser, res);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -74,16 +99,31 @@ export const updateProfile = async (req, res) => {
     }
 
     user.name = req.body.name || user.name;
-    user.phone = req.body.phone || user.phone;
-    user.address = req.body.address || user.address;
+
+    // Customer fields
+    if (user.userType === 'customer') {
+      user.phone = req.body.phone || user.phone;
+      user.address = req.body.address || user.address;
+    }
+
+    // Seller fields
+    if (user.userType === 'seller') {
+      user.businessName = req.body.businessName || user.businessName;
+      user.gstNumber = req.body.gstNumber || user.gstNumber;
+      user.document = req.body.document || user.document;
+    }
 
     const updatedUser = await user.save();
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
-      phone: updatedUser.phone,
-      address: updatedUser.address,
+      phone: updatedUser.phone || '',
+      address: updatedUser.address || '',
+      businessName: updatedUser.businessName || '',
+      gstNumber: updatedUser.gstNumber || '',
+      document: updatedUser.document || '',
+      userType: updatedUser.userType,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

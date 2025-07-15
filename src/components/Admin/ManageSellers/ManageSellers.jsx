@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import axios from "axios";
 import { CheckCircle, XCircle, Ban, ShieldCheck } from "lucide-react";
 import { toast } from "react-toastify";
 
@@ -7,44 +8,69 @@ const ManageSellers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
 
+  const token = localStorage.getItem("adminToken");
+
+  const fetchSellers = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/auth/admin/sellers", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSellers(res.data);
+    } catch (err) {
+      toast.error("Failed to fetch sellers.");
+    }
+  };
+
   useEffect(() => {
-    const storedSellers = JSON.parse(localStorage.getItem("sellers")) || [];
-    setSellers(storedSellers);
+    fetchSellers();
   }, []);
 
-  const updateSellers = (updatedSellers) => {
-    setSellers(updatedSellers);
-    localStorage.setItem("sellers", JSON.stringify(updatedSellers));
+  const handleApprove = async (id) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/auth/admin/sellers/${id}/status`,
+        { status: "approved" },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.success("Seller Approved!");
+      fetchSellers();
+    } catch (err) {
+      toast.error("Approval failed.");
+    }
   };
 
-  const handleApprove = (id) => {
-    const updated = sellers.map((seller) =>
-      seller.id === id ? { ...seller, status: "approved" } : seller
-    );
-    updateSellers(updated);
-    toast.success("Seller Approved!");
+  const handleReject = async (id) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/auth/admin/sellers/${id}/status`,
+        { status: "rejected" },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.error("Seller Rejected!");
+      fetchSellers();
+    } catch (err) {
+      toast.error("Rejection failed.");
+    }
   };
 
-  const handleReject = (id) => {
-    const updated = sellers.map((seller) =>
-      seller.id === id ? { ...seller, status: "rejected" } : seller
-    );
-    updateSellers(updated);
-    toast.error("Seller Rejected!");
-  };
-
-  const handleToggleBlock = (id) => {
-    const updated = sellers.map((seller) =>
-      seller.id === id ? { ...seller, isBlocked: !seller.isBlocked } : seller
-    );
-    updateSellers(updated);
-    toast.info("Seller block/unblock status updated!");
+  const handleToggleBlock = async (id) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/api/auth/admin/sellers/${id}/block`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      toast.info(res.data.message);
+      fetchSellers();
+    } catch (err) {
+      toast.error("Block/Unblock failed.");
+    }
   };
 
   const filteredSellers = sellers.filter((seller) => {
     const matchesSearch =
-      seller.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      seller.email.toLowerCase().includes(searchTerm.toLowerCase());
+      seller.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      seller.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       statusFilter === "All" || seller.status === statusFilter.toLowerCase();
@@ -84,7 +110,7 @@ const ManageSellers = () => {
         <div className="grid gap-6">
           {filteredSellers.map((seller) => (
             <div
-              key={seller.id}
+              key={seller._id}
               className="bg-white p-6 rounded-3xl shadow-lg hover:shadow-xl transition-all flex flex-col sm:flex-row sm:items-center justify-between border border-gray-200"
             >
               {/* Seller Info */}
@@ -114,13 +140,13 @@ const ManageSellers = () => {
                 {seller.status === "pending" && (
                   <>
                     <button
-                      onClick={() => handleApprove(seller.id)}
+                      onClick={() => handleApprove(seller._id)}
                       className="flex items-center gap-1 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition"
                     >
                       <CheckCircle size={18} /> Approve
                     </button>
                     <button
-                      onClick={() => handleReject(seller.id)}
+                      onClick={() => handleReject(seller._id)}
                       className="flex items-center gap-1 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition"
                     >
                       <XCircle size={18} /> Reject
@@ -130,7 +156,7 @@ const ManageSellers = () => {
 
                 {seller.status === "approved" && (
                   <button
-                    onClick={() => handleToggleBlock(seller.id)}
+                    onClick={() => handleToggleBlock(seller._id)}
                     className={`flex items-center gap-1 px-4 py-2 rounded-full transition ${
                       seller.isBlocked
                         ? "bg-green-500 text-white hover:bg-green-600"

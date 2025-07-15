@@ -54,3 +54,27 @@ export const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+// Get seller status by email
+export const getSellerStatus = async (req, res) => {
+  try {
+    const email = req.query.email;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const seller = await User.findOne({ email, userType: "seller" }).select("-password");
+
+    if (!seller) {
+      return res.status(404).json({ message: "Seller not found" });
+    }
+
+    res.json(seller);
+  } catch (error) {
+    console.error("Error in getSellerStatus:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+

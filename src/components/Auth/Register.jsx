@@ -37,39 +37,46 @@ const Register = () => {
 
   const validateEmail = (email) => /\S+@\S+\.\S+/.test(email);
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!user.name || !user.email || !user.password || !user.confirmPassword) {
-    setError("All fields are required!");
-    return;
-  }
+    if (!user.name || !user.email || !user.password || !user.confirmPassword) {
+      setError("All fields are required!");
+      return;
+    }
 
-  if (!validateEmail(user.email)) {
-    setError("Invalid email format!");
-    return;
-  }
+    if (!validateEmail(user.email)) {
+      setError("Invalid email format!");
+      return;
+    }
 
-  if (user.password.length < 6) {
-    setError("Password must be at least 6 characters!");
-    return;
-  }
+    if (user.password.length < 6) {
+      setError("Password must be at least 6 characters!");
+      return;
+    }
 
-  if (user.password !== user.confirmPassword) {
-    setError("Passwords do not match!");
-    return;
-  }
+    if (user.password !== user.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
 
-  const userData = { ...user, userType }; // If you have userType defined
+    const userData = { ...user, userType };
 
-  try {
-    const res = await registerUser(userData);
-    toast.success("Registered successfully! Please login.");
-    navigate("/login"); // ✅ Correct behavior
-  } catch (error) {
-    setError(error.response?.data?.message || "Registration failed!");
-  }
-};
+    try {
+      const res = await registerUser(userData);
+
+      if (userType === "seller") {
+        toast.success("Seller registered! Awaiting approval...");
+        localStorage.setItem("pendingSellerEmail", user.email);
+        navigate("/seller-approval-status");
+      } else {
+        toast.success("Registered successfully! Please login.");
+        navigate("/login");
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Registration failed!");
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 border border-pink-600 bg-pink-50 rounded-lg shadow-lg">

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -17,38 +18,42 @@ const AdminRegister = () => {
     setAdmin({ ...admin, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
-    if (!admin.name || !admin.email || !admin.password || !admin.confirmPassword) {
-      setError('All fields are required!');
-      return;
+    const { name, email, password, confirmPassword } = admin;
+
+    if (!name || !email || !password || !confirmPassword) {
+      return setError('All fields are required!');
     }
 
-    if (!/\S+@\S+\.\S+/.test(admin.email)) {
-      setError('Invalid email format!');
-      return;
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      return setError('Invalid email format!');
     }
 
-    if (admin.password.length < 6) {
-      setError('Password must be at least 6 characters!');
-      return;
+    if (password.length < 6) {
+      return setError('Password must be at least 6 characters!');
     }
 
-    if (admin.password !== admin.confirmPassword) {
-      setError('Passwords do not match!');
-      return;
+    if (password !== confirmPassword) {
+      return setError('Passwords do not match!');
     }
 
-    const adminData = {
-      name: admin.name,
-      email: admin.email,
-      password: admin.password
-    };
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/admin/register', {
+        name,
+        email,
+        password
+      });
 
-    localStorage.setItem('adminCredentials', JSON.stringify(adminData));
-    toast.success('Admin Registered Successfully!');
-    navigate('/admin-login');
+      toast.success(res.data.message || 'Admin Registered Successfully!');
+      navigate('/admin-login');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Registration failed';
+      setError(msg);
+      toast.error(msg);
+    }
   };
 
   return (

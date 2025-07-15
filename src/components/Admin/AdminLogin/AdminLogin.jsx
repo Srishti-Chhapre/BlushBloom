@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -7,30 +8,43 @@ const AdminLogin = () => {
   const [admin, setAdmin] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  
 
   const handleChange = (e) => {
     setAdmin({ ...admin, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
 
-    const storedAdmin = JSON.parse(localStorage.getItem('adminCredentials'));
+  try {
+    // ✅ Make API request to admin login endpoint
+    const response = await axios.post('http://localhost:5000/api/auth/admin/login', admin);
 
-    if (!storedAdmin) {
-      setError('No admin found. Please register first.');
-      return;
-    }
+    // ✅ Extract token, admin info, and message from response
+    const { token, admin: adminData, message } = response.data;
 
-    if (admin.email !== storedAdmin.email || admin.password !== storedAdmin.password) {
-      setError('Invalid email or password.');
-      return;
-    }
-
+    // ✅ Store session data in localStorage
     localStorage.setItem('isAdminLoggedIn', 'true');
-    toast.success('Admin Logged In Successfully!');
+    localStorage.setItem('adminToken', token);
+    localStorage.setItem('adminInfo', JSON.stringify(adminData));
+
+    // ✅ Show success notification
+    toast.success(message || 'Admin Logged In Successfully!');
+
+    // ✅ Redirect to dashboard
     navigate('/admin-dashboard');
-  };
+
+  } catch (error) {
+    // ❌ Handle login errors
+    const errorMsg = error.response?.data?.message || 'Login failed. Please try again.';
+    setError(errorMsg);
+    toast.error(errorMsg);
+    console.error('Admin Login Error:', error);
+  }
+};
+
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 border border-pink-600 bg-pink-50 rounded-lg shadow-lg">
