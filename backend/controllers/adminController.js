@@ -1,30 +1,29 @@
-
-import Order from "../models/Order.js"; 
+import Order from "../models/Order.js";
 import User from "../models/User.js";
 
 // ✅ Get all sellers
-export const getAllSellers = async (req, res) => {
-  try {
-    const sellers = await User.find({ userType: "seller" }).select("-password");
-    res.status(200).json(sellers);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch sellers" });
-  }
-};
+// export const getAllSellers = async (req, res) => {
+//   try {
+//     const sellers = await User.find({ userType: "seller" }).select("-password");
+//     res.status(200).json(sellers);
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to fetch sellers" });
+//   }
+// };
 
 // ✅ Update seller approval status
 export const updateSellerStatus = async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body;
+  const { approvalStatus, reason } = req.body;
 
-  if (!["approved", "rejected", "pending"].includes(status)) {
-    return res.status(400).json({ message: "Invalid status value" });
+  if (!["approved", "rejected", "pending"].includes(approvalStatus)) {
+    return res.status(400).json({ message: "Invalid approvalStatus value" });
   }
 
   try {
     const updatedSeller = await User.findByIdAndUpdate(
       id,
-      { status },
+      { approvalStatus, rejectionReason: reason || "" },
       { new: true, runValidators: true }
     ).select("-password");
 
@@ -32,9 +31,9 @@ export const updateSellerStatus = async (req, res) => {
       return res.status(404).json({ message: "Seller not found" });
     }
 
-    res.status(200).json({ message: `Seller ${status} successfully`, seller: updatedSeller });
+    res.status(200).json({ message: `Seller ${approvalStatus} successfully`, seller: updatedSeller });
   } catch (error) {
-    res.status(500).json({ message: "Failed to update seller status" });
+    res.status(500).json({ message: "Failed to update seller approval status" });
   }
 };
 
@@ -66,6 +65,14 @@ export const getAllUsers = async (req, res) => {
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Failed to fetch users" });
+  }
+};
+export const getAllSellers = async (req, res) => {
+  try {
+    const sellers = await User.find({ userType: "seller" });
+    res.json(sellers);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching sellers" });
   }
 };
 

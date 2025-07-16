@@ -27,7 +27,7 @@ const ManageSellers = () => {
 
   const handleApprove = async (id) => {
     try {
-      const res = await axios.put(
+      await axios.put(
         `http://localhost:5000/api/auth/admin/sellers/${id}/status`,
         { status: "approved" },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -40,10 +40,13 @@ const ManageSellers = () => {
   };
 
   const handleReject = async (id) => {
+    const reason = prompt("Please enter the reason for rejection:");
+    if (!reason) return;
+
     try {
-      const res = await axios.put(
+      await axios.put(
         `http://localhost:5000/api/auth/admin/sellers/${id}/status`,
-        { status: "rejected" },
+        { status: "rejected", reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.error("Seller Rejected!");
@@ -73,14 +76,16 @@ const ManageSellers = () => {
       seller.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesStatus =
-      statusFilter === "All" || seller.status === statusFilter.toLowerCase();
+      statusFilter === "All" || seller.approvalStatus === statusFilter.toLowerCase();
 
     return matchesSearch && matchesStatus;
   });
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-8 text-center text-pink-600">Manage Sellers</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center text-pink-600">
+        Manage Sellers
+      </h1>
 
       {/* Search and Filter Controls */}
       <div className="flex flex-wrap gap-4 justify-between mb-8">
@@ -115,49 +120,57 @@ const ManageSellers = () => {
             >
               {/* Seller Info */}
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-gray-800">{seller.businessName}</h2>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  {seller.businessName || "Unnamed Seller"}
+                </h2>
                 <p className="text-gray-600">{seller.email}</p>
                 <div className="flex items-center gap-2">
                   <span
                     className={`px-3 py-1 text-sm rounded-full font-medium ${
-                      seller.status === "approved"
+                      seller.approvalStatus === "approved"
                         ? "bg-green-100 text-green-600"
-                        : seller.status === "pending"
+                        : seller.approvalStatus === "pending"
                         ? "bg-yellow-100 text-yellow-600"
-                        : "bg-red-100 text-red-600"
+                        : seller.approvalStatus === "rejected"
+                        ? "bg-red-100 text-red-600"
+                        : "bg-gray-200 text-gray-600"
                     }`}
                   >
-                    {seller.status.charAt(0).toUpperCase() + seller.status.slice(1)}
+                    {seller.approvalStatus
+                      ? seller.approvalStatus.charAt(0).toUpperCase() + seller.approvalStatus.slice(1)
+                      : "Not Set"}
                   </span>
                   {seller.isBlocked && (
-                    <span className="bg-red-500 text-white px-2 py-1 text-xs rounded-full">Blocked</span>
+                    <span className="bg-red-500 text-white px-2 py-1 text-xs rounded-full">
+                      Blocked
+                    </span>
                   )}
                 </div>
               </div>
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3 mt-4 sm:mt-0">
-                {seller.status === "pending" && (
+                {seller.approvalStatus === "pending" && (
                   <>
                     <button
                       onClick={() => handleApprove(seller._id)}
-                      className="flex items-center gap-1 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition"
+                      className="flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition"
                     >
                       <CheckCircle size={18} /> Approve
                     </button>
                     <button
                       onClick={() => handleReject(seller._id)}
-                      className="flex items-center gap-1 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition"
+                      className="flex items-center gap-2 bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition"
                     >
                       <XCircle size={18} /> Reject
                     </button>
                   </>
                 )}
 
-                {seller.status === "approved" && (
+                {seller.approvalStatus === "approved" && (
                   <button
                     onClick={() => handleToggleBlock(seller._id)}
-                    className={`flex items-center gap-1 px-4 py-2 rounded-full transition ${
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full transition ${
                       seller.isBlocked
                         ? "bg-green-500 text-white hover:bg-green-600"
                         : "bg-yellow-500 text-white hover:bg-yellow-600"

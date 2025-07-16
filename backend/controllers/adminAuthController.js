@@ -27,7 +27,6 @@ export const registerAdmin = async (req, res) => {
 };
 
 // ✅ Login Admin
-// ✅ Login Admin - FIXED
 export const loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -47,7 +46,7 @@ export const loginAdmin = async (req, res) => {
     // Sign JWT token
     const token = jwt.sign(
       { id: admin._id, email: admin.email, role: "admin" },
-      JWT_SECRET,
+       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 

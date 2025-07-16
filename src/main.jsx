@@ -98,7 +98,7 @@ createRoot(document.getElementById("root")).render(
               <Route path="/payment-failure" element={<PaymentFailure />} />
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/admin-register" element={<AdminRegister />} />
-              <Route
+              {/* <Route
                 path="/admin-dashboard"
                 element={
                   localStorage.getItem("isAdminLoggedIn") &&
@@ -108,7 +108,8 @@ createRoot(document.getElementById("root")).render(
                     <Navigate to="/admin-login" />
                   )
                 }
-              />
+              /> */}
+              <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route
                 path="/admin-dashboard/manage-sellers"
                 element={<ManageSellers />}

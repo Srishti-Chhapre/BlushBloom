@@ -32,7 +32,7 @@ const handleSubmit = async (e) => {
 
     // ✅ Show success notification
     toast.success(message || 'Admin Logged In Successfully!');
-
+console.log("✅ Redirecting to dashboard...");
     // ✅ Redirect to dashboard
     navigate('/admin-dashboard');
 
@@ -70,6 +70,8 @@ const handleSubmit = async (e) => {
         <button type="submit" className="w-full bg-pink-500 text-white p-2 rounded hover:bg-pink-600">
           Login
         </button>
+        {/* <button onClick={() => navigate('/admin-dashboard')} className="text-blue-500 mt-4">Test Redirect</button> */}
+
       </form>
     </div>
   );

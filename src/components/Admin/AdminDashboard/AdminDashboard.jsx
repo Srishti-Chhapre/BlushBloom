@@ -30,10 +30,10 @@ const AdminDashboard = () => {
         const resSellers = await axios.get("http://localhost:5000/api/auth/admin/sellers", config);
         setTotalSellers(resSellers.data.length || 0);
 
-        const resUsers = await axios.get("http://localhost:5000/api/auth/users", config);
+        const resUsers = await axios.get("http://localhost:5000/api/auth/admin/users", config);
         setTotalUsers(resUsers.data.length || 0);
 
-        const resOrders = await axios.get("http://localhost:5000/api/auth/orders", config);
+        const resOrders = await axios.get("http://localhost:5000/api/auth/admin/orders", config);
         setTotalOrders(resOrders.data.length || 0);
       } catch (error) {
         console.error("Dashboard fetch error:", error);

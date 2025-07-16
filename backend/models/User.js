@@ -19,7 +19,6 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    // 🧍 Common for customers
     phone: {
       type: String,
     },
@@ -27,14 +26,12 @@ const userSchema = new mongoose.Schema(
       type: String,
     },
 
-    // 🔐 Roles
     userType: {
       type: String,
       enum: ["customer", "seller", "admin"],
       default: "customer",
     },
 
-    // 🧾 Seller-specific
     businessName: {
       type: String,
     },
@@ -48,6 +45,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "pending",
+    },
+    rejectionReason: {
+      type: String,
+    },
+
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
 
     isAdmin: {

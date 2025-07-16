@@ -41,9 +41,8 @@ router.get('/seller-status', getSellerStatus);          // Get status for seller
 // 🛡️ Admin Routes
 router.get('/admin/sellers',adminProtect, getAllSellers);                     // View all sellers
 router.put('/admin/sellers/:id/status',adminProtect, updateSellerStatus);     // Approve / Reject seller
-router.put('/admin/sellers/:id/block',adminProtect, toggleSellerBlock);       // Block / Unblock seller
-router.get('/admin/users', adminProtect, getAllUsers);      
-router.get('/admin/orders', adminProtect, getAllOrders);
+router.put('/admin/sellers/:id/block',adminProtect, toggleSellerBlock); 
+      // Block / Unblock seller
 
 router.post("/admin/register", registerAdmin);
 router.post('/admin/login', loginAdmin);
