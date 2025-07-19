@@ -14,53 +14,58 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // If already logged in, redirect
   useEffect(() => {
-    if (user) navigate("/");
+    if (user) {
+      if (user.userType === "customer") {
+        navigate("/");
+      } else if (user.userType === "seller") {
+        navigate("/seller/dashboard");
+      } else if (user.userType === "admin") {
+        navigate("/admin/dashboard");
+      }
+    }
   }, [user, navigate]);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!email || !password) {
-    setError("All fields are required!");
-    return;
-  }
-
-  try {
-    const res = await loginUser({ email, password });
-    const { token } = res.data;
-
-    const profileRes = await axios.get("http://localhost:5000/api/auth/profile", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const fullUser = { ...profileRes.data, token };
-    login(fullUser); // Save to context + localStorage
-
-    // 🔐 Redirect based on user type & status
-    if (fullUser.userType === "seller") {
-      if (fullUser.approvalStatus === "approved") {
-        toast.success("Login successful!");
-        navigate("/seller/dashboard"); // or wherever seller's dashboard is
-      } else {
-        localStorage.setItem("pendingSellerEmail", fullUser.email);
-        navigate("/seller/approval-status");
-      }
-    } else if (fullUser.userType === "admin") {
-      toast.success("Welcome Admin!");
-      navigate("/admin/dashboard");
-    } else {
-      toast.success("Login successful!");
-      navigate("/"); // customer
+    if (!email || !password) {
+      setError("All fields are required!");
+      return;
     }
 
-  } catch (error) {
-    setError(error.response?.data?.message || "Login failed!");
-  }
-};
+    try {
+      const res = await loginUser({ email, password });
+      const { token } = res.data;
 
+      const profileRes = await axios.get("http://localhost:5000/api/auth/profile", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
+      const fullUser = { ...profileRes.data, token };
+      login(fullUser); // Save in context/localStorage
 
+      if (fullUser.userType === "seller") {
+        if (fullUser.approvalStatus === "approved") {
+          toast.success("Login successful!");
+          navigate("/seller/dashboard");
+        } else {
+          toast.info("Your account is not approved yet.");
+          localStorage.setItem("pendingSellerEmail", fullUser.email);
+          navigate("/seller/approval-status");
+        }
+      } else if (fullUser.userType === "admin") {
+        toast.success("Welcome Admin!");
+        navigate("/admin/dashboard");
+      } else {
+        toast.success("Login successful!");
+        navigate("/");
+      }
+    } catch (error) {
+      setError(error.response?.data?.message || "Login failed!");
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto mt-20 p-6 border border-pink-600 bg-pink-50 rounded-lg shadow-lg">

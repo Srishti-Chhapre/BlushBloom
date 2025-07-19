@@ -59,8 +59,10 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    console.log("Login attempt:", email);
 
     const user = await User.findOne({ email });
+       console.log("User found:", user);
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
@@ -69,7 +71,7 @@ export const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
-
+console.log("Password match:", isMatch);
     generateTokenResponse(user, res);
   } catch (error) {
     res.status(500).json({ message: error.message });

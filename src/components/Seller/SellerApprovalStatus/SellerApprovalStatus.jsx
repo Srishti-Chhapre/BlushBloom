@@ -1,133 +1,86 @@
+// src/pages/SellerApprovalStatus.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { getUserProfile } from "../../../api/authApi";
 
 const SellerApprovalStatus = () => {
-  const [seller, setSeller] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [approvalStatus, setApprovalStatus] = useState("");
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
-
+ console.log("SellerApprovalStatus mounted");
   useEffect(() => {
-    const fetchSellerStatus = async () => {
-      const sellerEmail = localStorage.getItem("pendingSellerEmail");
+    const pendingEmail = localStorage.getItem("pendingSellerEmail");
+    setEmail(pendingEmail);
 
-      if (!sellerEmail) {
-        navigate("/");
-        return;
-      }
-
+    const fetchStatus = async () => {
       try {
-        const { data } = await axios.get(
-          `http://localhost:5000/api/auth/seller-status?email=${sellerEmail}`
-        );
-        setSeller(data);
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await getUserProfile(token);
+        const user = res.data;
+
+        if (user?.userType === "seller") {
+          setApprovalStatus(user.approvalStatus);
+        }
       } catch (error) {
-        console.error("Failed to fetch seller:", error);
-        navigate("/");
-      } finally {
-        setLoading(false);
+        console.error("Failed to fetch approval status", error);
       }
     };
 
-    fetchSellerStatus();
-  }, [navigate]);
+    fetchStatus();
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="text-center mt-20 text-lg">Loading seller details...</div>
-    );
-  }
+  const handleLoginRedirect = () => {
+    localStorage.removeItem("pendingSellerEmail");
+    navigate("/seller-dashboard");
+  };
 
-  if (!seller) {
-    return (
-      <div className="text-center mt-20 text-red-600 text-lg">
-        Seller not found.
-      </div>
-    );
-  }
-  if (loading) {
-    return (
-      <div className="text-center mt-20 text-lg">Loading seller details...</div>
-    );
-  }
-
-  if (!seller || !seller.approvalStatus) {
-    return (
-      <div className="text-center mt-20 text-red-600 text-lg">
-        Seller data is missing or invalid.
-      </div>
-    );
-  }
   return (
-    <div className="max-w-md mx-auto mt-20 p-6 border border-pink-600 bg-pink-50 rounded-lg shadow-lg text-center">
-      <h2 className="text-2xl font-bold mb-4">Seller Approval Status</h2>
+    <div className="flex justify-center items-center min-h-screen bg-pink-50">
+      <div className="bg-white shadow-lg rounded-xl p-6 max-w-md w-full text-center border-2 border-pink-400">
+        <img
+          src="https://i.gifer.com/ZZ5H.gif"
+          alt="Loading"
+          className="mx-auto mb-4 w-24"
+        />
 
-      {seller?.approvalStatus === "approved" ? (
-        <div className="flex flex-col items-center text-green-600 text-lg font-semibold mb-4">
-          <p className="mb-4">
-            ✅ Your request has been approved by the admin!
-          </p>
-          <img
-            src="https://media.giphy.com/media/111ebonMs90YLu/giphy.gif"
-            alt="Approved"
-            className="w-32 h-32"
-          />
-          <button
-            onClick={() => {
-              localStorage.removeItem("pendingSellerEmail");
-              navigate("/login");
-            }}
-            className="mt-6 bg-pink-500 text-white px-4 py-2 rounded-full hover:bg-pink-600"
-          >
-            Login Now
-          </button>
-        </div>
-      ) : seller?.approvalStatus === "rejected" ? (
-        <div className="flex flex-col items-center text-red-600 text-lg font-semibold mb-4">
-          <p className="mb-4">
-            ❌ Your request has been rejected by the admin.
-          </p>
-          <img
-            src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif"
-            alt="Rejected"
-            className="w-32 h-32"
-          />
-          <button
-            onClick={() => {
-              localStorage.removeItem("pendingSellerEmail");
-              navigate("/");
-            }}
-            className="mt-6 bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600"
-          >
-            Go to Home
-          </button>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center text-yellow-600 text-lg font-semibold mb-4">
-          <p className="mb-4">
-            ⏳ Your request is still pending. Please wait for admin approval.
-          </p>
-          <img
-            src="https://media.giphy.com/media/y1ZBcOGOOtlpC/giphy.gif"
-            alt="Pending Approval"
-            className="w-32 h-32"
-          />
-          <button
-            onClick={() => navigate("/")}
-            className="mt-6 bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600"
-          >
-            Go to Home
-          </button>
-        </div>
-      )}
-
-      <div className="mt-6 text-gray-700">
-        <p>
-          <strong>Business Name:</strong> {seller.businessName || "N/A"}
-        </p>
-        <p>
-          <strong>Email:</strong> {seller.email || "N/A"}
-        </p>
+        {approvalStatus === "approved" ? (
+          <>
+            <h2 className="text-xl font-semibold text-green-600 mb-2">
+              🎉 Your account has been approved!
+            </h2>
+            <p className="text-gray-700 mb-4">
+              Please click below to login and access your seller dashboard.
+            </p>
+            <button
+              onClick={handleLoginRedirect}
+              className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded"
+            >
+              Login Now
+            </button>
+          </>
+        ) : approvalStatus === "rejected" ? (
+          <>
+            <h2 className="text-xl font-semibold text-red-600 mb-2">
+              ❌ Your seller account was rejected.
+            </h2>
+            <p className="text-gray-700">
+              Please contact support or register again with different details.
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-xl font-semibold text-yellow-600 mb-2">
+              ⏳ Approval Pending
+            </h2>
+            <p className="text-gray-700">
+              Hello <span className="font-medium">{email}</span>, your seller
+              account is under review. Please wait while the admin approves your
+              account.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );

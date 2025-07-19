@@ -29,7 +29,7 @@ const ManageSellers = () => {
     try {
       await axios.put(
         `http://localhost:5000/api/auth/admin/sellers/${id}/status`,
-        { status: "approved" },
+        { approvalStatus: "approved" },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.success("Seller Approved!");
@@ -46,7 +46,7 @@ const ManageSellers = () => {
     try {
       await axios.put(
         `http://localhost:5000/api/auth/admin/sellers/${id}/status`,
-        { status: "rejected", reason },
+        { approvalStatus: "rejected", reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       toast.error("Seller Rejected!");

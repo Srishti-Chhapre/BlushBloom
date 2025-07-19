@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { registerUser } from "../../api/authApi";
 import { useUser } from "../../ContextAPI/UserContext";
-import axios from "axios";
 
 const Register = () => {
   const [userType, setUserType] = useState("customer");
@@ -24,11 +23,8 @@ const Register = () => {
   const navigate = useNavigate();
   const { user: currentUser } = useUser();
 
-  // 🔐 Redirect if user is already logged in
   useEffect(() => {
-    if (currentUser) {
-      navigate("/");
-    }
+    if (currentUser) navigate("/");
   }, [currentUser, navigate]);
 
   const handleChange = (e) => {
@@ -66,9 +62,9 @@ const Register = () => {
       const res = await registerUser(userData);
 
       if (userType === "seller") {
-        toast.success("Seller registered! Awaiting approval...");
+        toast.success("Seller registered! Awaiting admin approval.");
         localStorage.setItem("pendingSellerEmail", user.email);
-        navigate("/seller-approval-status");
+        navigate("/seller/seller-status");
       } else {
         toast.success("Registered successfully! Please login.");
         navigate("/login");
