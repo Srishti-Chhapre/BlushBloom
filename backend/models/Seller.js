@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const userSchema = new mongoose.Schema(
+const sellerSchema = new mongoose.Schema(
   {
-    name: {
+    shopName: {
       type: String,
-      required: [true, "Name is required"],
+      required: [true, "Shop name is required"],
+    },
+    ownerName: {
+      type: String,
+      required: [true, "Owner name is required"],
     },
     email: {
       type: String,
@@ -16,25 +20,34 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
     userType: {
       type: String,
-      default: "customer", // helpful if you ever need to check userType
+      default: "seller",
     },
   },
   { timestamps: true }
 );
 
 // Hash password before saving
-userSchema.pre("save", async function (next) {
+sellerSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function (enteredPassword) {
+sellerSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-const User = mongoose.model("User", userSchema);
-export default User;
+const Seller = mongoose.model("Seller", sellerSchema);
+export default Seller;

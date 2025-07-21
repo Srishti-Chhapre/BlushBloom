@@ -7,7 +7,7 @@ const SellerApprovalStatus = () => {
   const [approvalStatus, setApprovalStatus] = useState("");
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
- console.log("SellerApprovalStatus mounted");
+  console.log("SellerApprovalStatus mounted");
   useEffect(() => {
     const pendingEmail = localStorage.getItem("pendingSellerEmail");
     setEmail(pendingEmail);

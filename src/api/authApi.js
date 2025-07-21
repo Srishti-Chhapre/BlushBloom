@@ -1,18 +1,29 @@
-// src/api/authApi.js
 import axios from "axios";
 
 const API = axios.create({
   baseURL: "http://localhost:5000/api",
 });
 
-// Register new user (customer or seller)
-export const registerUser = (userData) => API.post("/auth/register", userData);
+// ========== CUSTOMER AUTH ==========
+export const registerCustomer = (userData) =>
+  API.post("/auth/customer/register", userData);
 
-// Login user
-export const loginUser = (userData) => API.post("/auth/login", userData);
+export const loginCustomer = (userData) =>
+  API.post("/auth/customer/login", userData);
 
-// Get logged-in user's profile
-export const getUserProfile = (token) =>
-  API.get("/auth/profile", {
+export const getCustomerProfile = (token) =>
+  API.get("/auth/customer/profile", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+// ========== SELLER AUTH ==========
+export const registerSeller = (userData) =>
+  API.post("/auth/seller/register", userData);
+
+export const loginSeller = (userData) =>
+  API.post("/auth/seller/login", userData);
+
+export const getSellerProfile = (token) =>
+  API.get("/auth/seller/profile", {
     headers: { Authorization: `Bearer ${token}` },
   });

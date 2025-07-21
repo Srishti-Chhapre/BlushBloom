@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import { UserProvider } from "./ContextAPI/UserContext";
 import { SellerProvider } from "./ContextAPI/SellerContext";
 
-import ProtectedRoute from "./components/Auth/ProtectedRoute";
+import ProtectedRoute from "./components/CustomerAuth/ProtectedRoute";
 
 // Pages
 import Home from "./components/Home/Home";
@@ -20,11 +20,13 @@ import ContactUs from "./components/ContactUs/ContactUs";
 import ProductPage from "./components/ProductPage/ProductPage";
 import CartPage from "./components/CartPage/CartPage";
 import BuyNowPage from "./components/BuyNowPage/BuyNowPage";
-import Login from "./components/Auth/Login";
-import Register from "./components/Auth/Register";
+import Login from "./components/CustomerAuth/CustomerLogin"; // Customer Login
+import Register from "./components/CustomerAuth/CustomerRegister"; // Customer Register
+import SellerLogin from "./components/Seller/SellerAuth/SellerLogin";
+import SellerRegister from "./components/Seller/SellerAuth/SellerRegister";
 import Profile from "./components/ProfilePage/ProfilePage";
 import EditProfile from "./components/EditProfile/EditProfile";
-import ChangePassword from "./components/Auth/ChangePassword";
+import ChangePassword from "./components/CustomerAuth/ChangePassword";
 import PaymentPage from "./components/PaymentPage/PaymentPage";
 import PaymentSuccess from "./components/PaymentPage/PaymentSuccess";
 import PaymentFailure from "./components/PaymentPage/PaymentFailure";
@@ -53,33 +55,41 @@ createRoot(document.getElementById("root")).render(
               <Route path="/about" element={<AboutUs />} />
               <Route path="/contact" element={<ContactUs />} />
               <Route path="/product/:id" element={<ProductPage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/payment-success" element={<PaymentSuccess />} />
               <Route path="/payment-failure" element={<PaymentFailure />} />
 
-              {/* Seller Status (before approval) */}
+              {/* Customer Auth */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+
+              {/* Seller Auth */}
+              <Route path="/seller-login" element={<SellerLogin />} />
+              <Route path="/seller-register" element={<SellerRegister />} />
+
+              {/* Seller status before approval */}
               <Route path="/seller/seller-status" element={<SellerApprovalStatus />} />
 
-              {/* Admin Routes */}
+              {/* Admin Auth */}
               <Route path="/admin-login" element={<AdminLogin />} />
               <Route path="/admin-register" element={<AdminRegister />} />
+
+              {/* Admin Dashboard */}
               <Route path="/admin-dashboard" element={<AdminDashboard />} />
               <Route path="/admin-dashboard/manage-sellers" element={<ManageSellers />} />
               <Route path="/admin-dashboard/view-users" element={<ViewUsers />} />
               <Route path="/admin-dashboard/view-orders" element={<ViewAllOrders />} />
 
-              {/* Protected User Routes */}
+              {/* Protected Customer Routes */}
               <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
               <Route path="/buy-now/:id" element={<ProtectedRoute><BuyNowPage /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
               <Route path="/change-password" element={<ProtectedRoute><ChangePassword /></ProtectedRoute>} />
 
-              {/* Seller Routes */}
-              <Route path="/seller-dashboard" element={<SellerDashboard />} />
-              <Route path="/seller/add-product" element={<AddProductPage />} />
+              {/* Protected Seller Routes */}
+              <Route path="/seller-dashboard" element={<ProtectedRoute><SellerDashboard /></ProtectedRoute>} />
+              <Route path="/seller/add-product" element={<ProtectedRoute><AddProductPage /></ProtectedRoute>} />
               <Route path="/seller/edit-product/:id" element={<ProtectedRoute><EditProductPage /></ProtectedRoute>} />
             </Routes>
           </HashRouter>
