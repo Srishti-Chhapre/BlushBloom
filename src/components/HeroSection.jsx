@@ -86,7 +86,7 @@ const HeroSection = () => {
             />
 
             {/* Slide Text */}
-            <div className="absolute top-24 left-14 w-5/6 transform -translate-x-1/2 px-4 py-2 rounded-full text-gray-800 herosectionFontFamily">
+            <div className="absolute top-24 left-14 w-5/6 transform  px-4 py-2 rounded-full text-gray-800 herosectionFontFamily">
               {slide.id === 1 ? (
                 <>
                   <div>{slide.firstLineText}</div>

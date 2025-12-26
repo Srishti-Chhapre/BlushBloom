@@ -1,7 +1,7 @@
 // src/pages/SellerApprovalStatus.jsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUserProfile } from "../../../api/authApi";
+import { getCustomerProfile } from "../../../api/authApi";
 
 const SellerApprovalStatus = () => {
   const [approvalStatus, setApprovalStatus] = useState("");
@@ -17,7 +17,7 @@ const SellerApprovalStatus = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const res = await getUserProfile(token);
+        const res = await getCustomerProfile(token);
         const user = res.data;
 
         if (user?.userType === "seller") {
